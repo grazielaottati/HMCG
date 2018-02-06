@@ -1,0 +1,19 @@
+create or replace view cus_hmcg_atend_amb_iii_v as
+select  ap.cd_estabelecimento,
+        trunc(ap.dt_entrada, 'MM') dt_referencia,
+        sa.cd_centro_controle,
+        count(1) qt_distribuicao
+from    parametro_custo      pc,
+        setor_atendimento    sa,
+        atend_paciente_unidade au,
+        atendimento_paciente ap
+where   1 = 1
+and     ap.dt_entrada >= to_date('01/' || to_char(pc.dt_referencia, 'mm/yyyy'), 'dd/mm/yyyy')
+and     ap.dt_entrada <  trunc(last_day(pc.dt_referencia)) + 1
+and     au.nr_atendimento        = ap.nr_atendimento
+and     sa.cd_setor_atendimento  = au.cd_setor_atendimento
+and     sa.cd_centro_controle in(84,83,85,86,91,95,96,133,303,493,305,306,475,482,308,307)
+GROUP BY ap.cd_estabelecimento,
+         trunc(ap.dt_entrada, 'MM'),
+         sa.cd_centro_controle
+;
